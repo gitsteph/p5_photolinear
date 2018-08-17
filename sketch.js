@@ -10,7 +10,7 @@ function scribbleLines(targetImg) {
     cursor("HAND");
     if (targetImg.pixels.length > 0) {
         var scribble = new Scribble();
-        var pixelValueWidth = pixelDensity() * targetImg.width * 4;
+        var pixelValueWidth = targetImg.width * 4;
         for (var imgHeightIndex = 0; imgHeightIndex < targetImg.height; imgHeightIndex += 8) {
             for (var pixelValueWidthIndex = 0; pixelValueWidthIndex < pixelValueWidth; pixelValueWidthIndex += 64) {
                 var x1 = pixelValueWidthIndex / 4;
