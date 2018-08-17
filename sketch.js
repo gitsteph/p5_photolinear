@@ -2,7 +2,7 @@ var img;
 
 
 function preload() {
-    img = loadImage("baseimage".concat(Math.floor(random(0, 3))).concat(".jpg"));
+    img = loadImage("assets/baseimage".concat(Math.floor(random(0, 3))).concat(".jpg"));
 }
 
 function scribbleLines(targetImg) {
