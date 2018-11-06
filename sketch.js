@@ -1,4 +1,6 @@
+var canvas;
 var img;
+var reader;
 var strokeThickness;
 var strokeLength;
 var strokeThicknessSlider;
@@ -10,7 +12,7 @@ function preload() {
 }
 
 function scribbleLines(targetImg) {
-    var canvas = createCanvas(windowWidth, windowHeight);
+    canvas.clear();
     cursor("HAND");
     if (targetImg.pixels.length > 0) {
         var scribble = new Scribble();
@@ -38,30 +40,58 @@ function scribbleLines(targetImg) {
 }
 
 function setup() {
-    img.resize(0, Math.min((windowHeight - 100), 480));
+    reader = new FileReader();
+
+    img.resize(0, Math.min((windowHeight - 100), 400));
     img.loadPixels();
+
+    canvas = createCanvas(windowWidth, windowHeight);
 
     strokeThicknessSlider = createSlider(1, 50, 5, 1);
     strokeThicknessSlider.style('width', '120px');
-    strokeThicknessSlider.position(5, img.height + 50);
+    cpos = canvas.position();
+
+    strokeThicknessSlider.position(5, img.height + 50 + cpos.y);
 
     strokeLengthSlider = createSlider(5, 50, 25, 1);
     strokeLengthSlider.style('width', '120px');
-    strokeLengthSlider.position(5, img.height + 100);
+    strokeLengthSlider.position(5, img.height + 100 + cpos.y);
+
+    strokeThickness = strokeThicknessSlider.value(); // 2 default
+    strokeLength = strokeLengthSlider.value() // 25 default
 
     scribbleLines(img);
 }
 
+function changeImage(file) {
+    reader.onload = function () {
+        img = loadImage(reader.result,
+            function() {
+                img.resize(0, Math.min((windowHeight - 100), 400));
+                img.loadPixels();
+                selectBox.html("image loaded");
+            }
+        );
+    };
+    reader.readAsDataURL(file);
+    var selectBox = select("#uploadPrompt");
+    console.log(selectBox.html());
+    selectBox.html("loading your image...");
+    console.log("loading");
+}
+
 function draw() {
+    canvas = createCanvas(windowWidth, windowHeight);
     strokeThickness = strokeThicknessSlider.value(); // 2 default
     strokeLength = strokeLengthSlider.value() // 25 default
 
     scribbleLines(img);
 
-    textSize(50);
+    var textHeight = 50;
+    textSize(textHeight);
     fill(255,0,255, 180);
     stroke(255,103,0);
     strokeWeight(2);
-    text("stroke thickness", strokeThicknessSlider.x * 2 + strokeThicknessSlider.width, strokeThicknessSlider.y + strokeThicknessSlider.height / 2);
-    text("stroke length", strokeLengthSlider.x * 2 + strokeLengthSlider.width, strokeLengthSlider.y + strokeLengthSlider.height / 2);
+    text("stroke thickness", strokeThicknessSlider.x * 2 + strokeThicknessSlider.width, strokeThicknessSlider.y - canvas.position().y + textHeight / 2);
+    text("stroke length", strokeLengthSlider.x * 2 + strokeLengthSlider.width, strokeLengthSlider.y - canvas.position().y + textHeight / 2);
 }
